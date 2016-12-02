@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <link rel="icon" type="image/png" href="../dist/css/logo-green.jpg" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>IoT Soft Box - Live Objects</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <!-- Custom CSS -->
+  <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+  <link href="../dist/css/lom.css" rel="stylesheet">
+
+  <link href="../dist/css/custom.css" rel="stylesheet">
+
+
+  <!-- Custom Fonts -->
+  <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+</head>
+
+<body>
+
+  <div id="wrapper">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <div class="display_title">
+          <img src="../dist/css/logo-green.jpg" alt="Logo" style="width:50px;height:50; float:left; background:transparent;">
+          <a class="navbar-brand" href="index.html">Paul's Greenhouse</a>
+        </div>
+      </div>
+      <!-- /.navbar-header -->
+
+      <div class="navbar-default sidebar hidden-xs" role="navigation">
+        <div class="wrapper">
+          <div class="sidebar-nav navbar-collapse">
+            <ul class="nav nav-pills nav-stacked" id="side-menu">
+              <li class="ng-hide">
+                <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Monitor & Control</a>
+              </li>
+              <li class="ng-hide">
+                <a href="map.html"><i class="fa fa-cog fa-fw"></i> Configuration</a>
+              </li>
+
+            </ul>
+          </div>
+          <!-- /.sidebar-collapse -->
+        </div>
+      </div>
+      <!-- /.navbar-static-side -->
+    </nav>
+    <h1 class="secondary-navbar" ng-show="main.isLoggedIn">
+      <div class="container-fluid">IoT Soft Box and Live Objects demonstrator</div>
+    </h1>
+
+    <div id="page-wrapper">
+      <div class="row">
+        <div class="col-lg-6">
+          <!-- /.panel -->
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <i class="fa fa-dashboard fa-fw"></i>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs header_button" onclick="display_dashboard_panel()">
+                  Dashboard
+                </button>
+                <button type="button" class="btn btn-default btn-xs header_button" onclick="display_luminosity_panel()">
+                  Luminosity
+                </button>
+                <button type="button" class="btn btn-default btn-xs header_button" onclick="">
+                  Temperature
+                </button>
+                <button type="button" class="btn btn-default btn-xs header_button" onclick="">
+                  Humidity
+                </button>
+                <button type="button" class="btn btn-default btn-xs header_button" onclick="">
+                  Pressure
+                </button>
+              </div>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body" id="luminosity_panel">
+              <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                  Time period
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                  <li onclick="print_luminosity_from_now(12*60)">12h
+                  </li>
+                  <li onclick="print_luminosity_from_now(24*60)">24h
+                  </li>
+                  <li onclick="print_luminosity_from_now(48*60)">48h
+                  </li>
+                </ul>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs " onclick="go_past(1*60)">
+                  -1h
+                </button>
+                <button type="button" class="btn btn-default btn-xs " onclick="go_realtime()">
+                  Realtime
+                </button>
+                <button type="button" class="btn btn-default btn-xs " onclick="go_future(1*60)">
+                  +1h
+                </button>
+                <button type="button" class="btn btn-default btn-xs " onclick="zoom(1)">
+                  Zoom
+                </button>
+              </div>
+              <div class="flot-chart" id="real_time_luminosity">
+                <div class="flot-chart-content"></div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  Mean : <span id="mean_value"></span>
+                </div>
+                <div class="col-lg-4">
+                  Max : <span id="max_value"></span>
+                </div>
+                <div class="col-lg-4">
+                  Min : <span id="min_value"></span>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body" id="dashboard_panel">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                  <thead>
+                    <tr>
+                      <th>Sensors</th>
+                      <th>Last value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td onclick="display_luminosity_panel()"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Luminosity</td>
+                      <td id="luminosity_last_value">70%</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fa fa-fire" aria-hidden="true"></i> Temperature</td>
+                      <td>50°F</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fa fa-tint" aria-hidden="true"></i> Relative humidity</td>
+                      <td>83%</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fa fa-cloud" aria-hidden="true"></i> Pressure</td>
+                      <td>29.96 inHg</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- /.panel-body -->
+          </div>
+          <!-- /.panel -->
+        </div>
+        <div class="col-lg-6">
+          <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Control status
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body" id="light_display">
+              <div class="row" id="light_container">
+              </div>
+              <div class="row" id="fan_container">
+                <div class="col-lg-2"><img src="../dist/css/fan.png" alt="Logo" style="width:40px;height:40px; background:transparent;"></div>
+                <div class="col-lg-2"><img src="../dist/css/fan.png" alt="Logo" style="width:40px;height:40px; background:transparent;"></div>
+              </div>
+              Watering  : 1.8 gpm per 1.000 ft²
+            </div>
+            <!-- /.panel-body -->
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-bell fa-fw"></i> Logs
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+              <ul id="log_list" class="list-unstyled">
+              </ul>
+            </div>
+            <!-- /.panel-body -->
+          </div>
+        </div>
+        <!-- /.col-lg-12 -->
+      </div>
+      <!-- /.row -->
+      <div class="panel panel-default">
+        <div class="panel-heading"><i class="fa fa-cogs" aria-hidden="true"></i> Manual commands
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+          <div class="form-group">
+            <div class="row">
+            <div class="col-md-6">
+            <div class="row row_with_margin">
+              <div class="col-md-4">
+                Switch on lights
+              </div>
+              <div class="col-lg-3">
+                <select class="form-control"  id="lights_number_input">
+                  <option>0</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                </select>
+              </div>
+              <div class="col-lg-2">
+                <!--<p class="help-block"></p> -->
+                <button type="button" onclick="send_lights_command()" class="btn btn-default">Send</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                Water irrigation (gpm per 1.000 ft²)
+              </div>
+              <div class="col-lg-3">
+                <input class="form-control" type="number" value="2.5"></input>
+              </div>
+              <div class="col-lg-2">
+                <!--<p class="help-block"></p> -->
+                <button type="button" onclick="send_lights_command()" class="btn btn-default">Send</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row row_with_margin">
+              <div class="col-md-4">
+                Enable fans
+              </div>
+              <div class="col-lg-3">
+                <select class="form-control">
+                  <option>2</option>
+                  <option>0</option>
+                  <option>1</option>
+                  
+                  <option>3</option>
+                  <option>4</option>
+                </select>
+              </div>
+              <div class="col-lg-2">
+                <!--<p class="help-block"></p> -->
+                <button type="button" onclick="send_lights_command()" class="btn btn-default">Send</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                Heat to (°F)
+              </div>
+              <div class="col-lg-3">
+                <input class="form-control" type="text" value="55"></input>
+              </div>
+              <div class="col-lg-2">
+                <!--<p class="help-block"></p> -->
+                <button type="button" onclick="send_lights_command()" class="btn btn-default">Send</button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading"> <i class="fa fa-upload" aria-hidden="true"></i> Automatic Rules
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+          <div class="event_rule">
+            <div>
+              <span class="rule_title">Rule 1 </span><label class="switch">
+                <input onclick="rule1_activate()" id="rule1_activate" type="checkbox">
+                <div class="slider round"></div>
+              </label>
+            </div>
+            <form class="form-inline">
+              <div class="form-group rules_form_group">
+                <div class="row">
+                  <div class="col-md-6">
+                    If luminosity is
+                    <select class="form-control"  onchange='change_form("rule1", this.value);' id="rule1_operator">
+                      <option value='>='>>=</option>
+                      <option value='<='><=</option>
+                      <option value='mail'>unavailable</option>
+                    </select>
+                    <span id='rule1_lux_input'><input type="number" class="small_input form-control" id="rule1_threshold">
+                      %</span>
+                    </div>
+
+                    <div class="col-md-6" id="action_form_rule1">
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div class="form-group rules_form_group">
+                <div class="row">
+                  <div class="col-lg-2">
+                    <button type="button" onclick="apply_rule1()" class="btn btn-default" value="1">Apply</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="event_rule">
+
+              <div>
+                <span class="rule_title">Rule 2 </span><label class="switch">
+                  <input onclick="rule2_activate()" id="rule2_activate" type="checkbox">
+                  <div class="slider round"></div>
+                </label>
+              </div>
+              <form class="form-inline">
+                <div class="form-group rules_form_group">
+                  <div class="row">
+                    <div class="col-md-6">
+                      If luminosity is
+                      <select class="form-control"  onchange='change_form("rule2", this.value);' id="rule2_operator">
+                        <option value='>='>>=</option>
+                        <option value='<='><=</option>
+                        <option value='mail'>unavailable</option>
+                      </select>
+                      <span id='rule2_lux_input'><input type="number" class="small_input form-control" id="rule2_threshold">
+                        %</span>
+                      </div>
+
+                      <div class="col-md-6" id="action_form_rule2">
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <div class="form-group rules_form_group">
+                  <div class="row">
+                    <div class="col-lg-2">
+                      <button type="button" onclick="apply_rule2()" class="btn btn-default" value="1">Apply</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- /.panel-body -->
+          </div>
+          <!-- /#page-wrapper -->
+        </div>
+      </div>
+      <!-- /#wrapper -->
+
+      <!-- jQuery -->
+      <script src="../vendor/jquery/jquery.min.js"></script>
+
+      <!-- Bootstrap Core JavaScript -->
+      <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+      <!-- Custom Theme JavaScript -->
+      <script src="../dist/js/sb-admin-2.js"></script>
+
+      <!--<script type="text/javascript" src="../js/canvasjs.min.js"></script>-->
+      <!-- Flot Charts JavaScript -->
+      <script src="../vendor/flot/excanvas.min.js"></script>
+      <script src="../vendor/flot/jquery.flot.js"></script>
+      <script src="../vendor/flot/jquery.flot.pie.js"></script>
+      <script src="../vendor/flot/jquery.flot.resize.js"></script>
+      <script src="../vendor/flot/jquery.flot.time.js"></script>
+      <script src="../vendor/flot-tooltip/jquery.flot.tooltip.min.js"></script>
+      <script src="../data/flot-data.js"></script>
+
+      <!--<script src="../js/browserMqtt.js"></script>-->
+      <script src="../js/Paho_mqtt.js" type="text/javascript"></script>
+
+      <script src="../js/common.js"></script>
+      <script src="../js/rule_manager.js"></script>
+      <script src="../js/mqtt_manager.js"></script>
+      <script src="../js/control_manager.js"></script>
+
+    </body>
+
+    </html>

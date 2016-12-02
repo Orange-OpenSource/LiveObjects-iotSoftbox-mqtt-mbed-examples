@@ -1,0 +1,215 @@
+.secondary-navbar{
+  border-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+#page-wrapper{
+  border-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.nav-pills > li > a:focus, .nav-pills > li.active > a:focus {
+    background-color: rgb(10, 110, 50);
+}
+
+.nav-pills > li > a:focus, .nav-pills > li.active > a:hover {
+    background-color: rgb(10, 110, 50);
+}
+
+.header_button{
+  color: white !important;
+}
+
+.navbar-default{
+  background-color: rgb(10, 110, 50);
+}
+
+.panel-default > .panel-heading {
+    background-color: rgb(10, 110, 50);
+}
+
+.sidebar ul li a.active {
+    background-color: rgb(82,189,135);
+}
+
+.btn:focus .btn-default:focus .btn-xs:focus .header_button:focus{
+  color: rgb(255, 255, 255);
+}
+
+.btn-default:hover, .btn-default.hover, .btn-default:focus, .btn-default:focus {
+    color: rgb(255, 255, 255);
+    background-color: rgb(82,189,135);
+    border-color: rgb(82,189,135);
+}
+
+.btn-default {
+    color: rgb(10, 110, 50);
+    border-color: rgb(10, 110, 50);;
+    background-color: transparent;
+}
+
+.row_with_margin{
+  margin-bottom:25px;
+}
+
+
+.small_input{
+  width: 100px !important;
+}
+
+.btn.btn-sm, .btn.btn-xs {
+  font-size: 1.2rem;
+}
+
+.rules_form_group{
+  width: 100%;
+}
+
+.navbar{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-height: 0px;
+}
+
+.sidebar{
+  top: 137px;
+}
+.navbar-brand{
+  margin-left: 10px;
+  height: 0px;
+}
+
+.secondary-navbar{
+  border-bottom: 3px black solid;
+}
+
+.event_rule{
+  margin-top: 30px;
+  border-bottom: 1px solid black;
+}
+
+.rule_title{
+  width: 50%;
+  position: relative;
+  bottom: 16px;
+}
+
+.resized_input{
+  font-size: 1.4rem !important;
+  height: 32px;
+}
+
+#frequency_input{
+  font-size: 1.4rem !important;
+  height: 35px;
+}
+
+#title_loc{
+  margin-left: 0px;
+}
+
+#page-wrapper{
+  border-left: 3px black solid;
+}
+
+.panel-heading {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+
+#real_time_luminosity{
+  height: 350px;
+}
+
+.command_history_item{
+  height: 80px;
+}
+
+#light_display{
+  height: 155px;
+}
+
+#light_container, #fan_container{
+  height: 50px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+#log_list{
+  height: 171px;
+}
+
+#page-wrapper{
+  padding-top: 25px;
+}
+
+#center
+{
+  list-style-type: none;
+  padding-left: 0px;
+  min-height: 30px;
+}
+
+/* SWITCH */
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.alert_footer{
+  height: 28px;
+}

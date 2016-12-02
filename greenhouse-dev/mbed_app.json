@@ -1,0 +1,17 @@
+{
+    "config": {
+        "network-interface":{
+            "help": "options are ETHERNET",
+            "value": "ETHERNET"
+        }
+    },
+    "macros": ["MBEDTLS_USER_CONFIG_FILE=\"mbedtls_configs/liveobjects_mbedtls_custom_config.h\"", "MBED_CONF_MBED_TRACE_ENABLE=1"],
+    "target_overrides": {
+        "*": {
+            "target.features_add": [ "COMMON_PAL" ],
+             "mbed-trace.enable": 1
+        }
+    }
+}
+
+
