@@ -31,7 +31,6 @@
 
 
 //#define LOC_MQTT_API_KEEPALIVEINTERVAL_SEC   30
-//#define LOC_MQTT_DEF_COMMAND_TIMEOUT         5000
 //#define LOC_MQTT_DEF_SND_SZ                  (1024*2)
 //#define LOC_MQTT_DEF_RCV_SZ                  (1024*2)
 

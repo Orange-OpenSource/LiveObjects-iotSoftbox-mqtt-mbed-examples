@@ -22,16 +22,16 @@
 #include "mbed.h"
 #include "rtos.h"
 
-static const char* appv_version = "MBED SAMPLE V02.01";
+static const char* appv_version = "MBED BASIC SAMPLE V02.05";
 
 #if 0
 #define DBG_DFT_MAIN_LOG_LEVEL    3
-#define DBG_DFT_LOMC_LOG_LEVEL    1
 #define DBG_DFT_MBED_LOG_LEVEL   TRACE_ACTIVE_LEVEL_ALL
+#define DBG_DFT_LOMC_MSG_DUMP    0x0B
 #else
 #define DBG_DFT_MAIN_LOG_LEVEL    0
-#define DBG_DFT_LOMC_LOG_LEVEL    0
 #define DBG_DFT_MBED_LOG_LEVEL   TRACE_ACTIVE_LEVEL_INFO
+#define DBG_DFT_LOMC_MSG_DUMP    0x00
 #endif
 
 // Two application threads:
@@ -756,7 +756,7 @@ const char* appv_help =
         " r     : push 'resources'\r\n"
         " p     : publish  STATUS message\r\n"
         " e     : Enable/Disable the data publishing\r\n"
-        " X|M|n : Enable/Disable the dump of published message (X to enable also hexa dump)\r\n"
+        " X|M|m : Enable/Disable the dump of published message (X to enable also hexa dump)\r\n"
         " D|I|W : set debug log level (mbed_trace)\r\n"
         " 0-9   : set appli log level \r\n"
         ;
@@ -811,15 +811,15 @@ void thread_input_cons(void) {
                 }
                 else if (c == 'X') {
                      output.printf(">>> Enable Message Dump (+ hexa dump)\r\n");
-                     LiveObjectsClient_SetDbgLevel(3);
+                     LiveObjectsClient_SetDbgMsgDump(0x0B);
                  }
                 else if (c == 'M') {
                     output.printf(">>> Enable Message Dump\r\n");
-                    LiveObjectsClient_SetDbgLevel(1);
+                    LiveObjectsClient_SetDbgMsgDump(0x05);
                 }
                 else if (c == 'm') {
                     output.printf(">>> Disable Message Dump\r\n");
-                LiveObjectsClient_SetDbgLevel(0);
+                    LiveObjectsClient_SetDbgMsgDump(0);
                 }
                 else if (c == 'D') {
                     output.printf(">>> Set trace level : DEBUG\r\n");
@@ -901,7 +901,7 @@ int main() {
     if (0 == app_net_init()) {
         output.printf("\n\rConnected to Network successfully\r\n");
 
-        LiveObjectsClient_SetDbgLevel(DBG_DFT_LOMC_LOG_LEVEL);
+        LiveObjectsClient_SetDbgMsgDump(DBG_DFT_LOMC_MSG_DUMP);
 
         // Initialize the LiveObjects Client Context
         // -----------------------------------------
@@ -979,6 +979,11 @@ int main() {
             // Enable the receipt of resource update requests
             ret = LiveObjectsClient_ControlResources(true);
             if (ret < 0) output.printf(" !!! ERROR (%d) to enable the receipt of resource update request !\r\n", ret);
+
+#if 0
+            ret = LiveObjectsClient_DnsResolve();
+            output.printf(" !!! LiveObjectsClient_DnsResolve returns %d\r\n", ret);
+#endif
 
 #if 0
             // ==================================

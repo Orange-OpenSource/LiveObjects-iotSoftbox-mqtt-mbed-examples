@@ -27,17 +27,18 @@
 #include "rtos.h"
 
 
-static const char* appv_version = "MBED GREENHOUSE DEMO V02.01";
+static const char* appv_version = "MBED GREENHOUSE DEMO V02.06";
 
 #if 0
 #define DBG_DFT_MAIN_LOG_LEVEL    3
-#define DBG_DFT_LOMC_LOG_LEVEL    1
 #define DBG_DFT_MBED_LOG_LEVEL   TRACE_ACTIVE_LEVEL_ALL
+#define DBG_DFT_LOMC_MSG_DUMP    0x0B
 #else
 #define DBG_DFT_MAIN_LOG_LEVEL    0
-#define DBG_DFT_LOMC_LOG_LEVEL    0
 #define DBG_DFT_MBED_LOG_LEVEL   TRACE_ACTIVE_LEVEL_INFO
+#define DBG_DFT_LOMC_MSG_DUMP    0x00
 #endif
+
 
 Serial            output(USBTX, USBRX);
 
@@ -65,11 +66,12 @@ uint8_t           appv_data_enabled = 1;
 // ==========================================================
 //
 enum app_state_enum {
-    APP_STATE_UNKNOWN = 0,
-    APP_STATE_INIT,
-    APP_STATE_NETWORK_READY,
-    APP_STATE_CONNECTING,
-    APP_STATE_CONNECTED
+    APP_STATE_UNKNOWN = 0,        ///< Unknown state
+    APP_STATE_INIT,               ///< Initilalization
+    APP_STATE_NETWORK_READY,      ///< Ethernet Network is ready. Device has IP address.
+    APP_STATE_CONNECTING,         ///< Connecting to the LiveObjects platform
+    APP_STATE_CONNECTED,          ///< Connected to the LiveObjects platform
+    APP_STATE_DOWN                ///< the LiveObjects thread is down (or stopped)
 }  appv_state = APP_STATE_INIT;
 
 // ----------------------------------------------------------
@@ -989,16 +991,16 @@ void thread_input_cons(void) {
                     LiveObjectsClient_PushCfgParams();
                 }
                 else if (c == 'X') {
-                    output.printf(">>> Enable Message Dump\r\n");
-                    LiveObjectsClient_SetDbgLevel(3);
-                }
+                     output.printf(">>> Enable Message Dump (+ hexa dump)\r\n");
+                     LiveObjectsClient_SetDbgMsgDump(0x0B);
+                 }
                 else if (c == 'M') {
                     output.printf(">>> Enable Message Dump\r\n");
-                    LiveObjectsClient_SetDbgLevel(1);
+                    LiveObjectsClient_SetDbgMsgDump(0x05);
                 }
                 else if (c == 'm') {
                     output.printf(">>> Disable Message Dump\r\n");
-                    LiveObjectsClient_SetDbgLevel(0);
+                    LiveObjectsClient_SetDbgMsgDump(0);
                 }
                 else if (c == 'D') {
                     output.printf(">>> Set trace level : DEBUG\r\n");
@@ -1038,6 +1040,7 @@ static void appli_client_state_cb(LiveObjectsD_State_t state)
     case CSTATE_CONNECTING:    new_state = APP_STATE_CONNECTING; break;
     case CSTATE_CONNECTED:     new_state = APP_STATE_CONNECTED; break;
     case CSTATE_DISCONNECTED:  new_state = APP_STATE_NETWORK_READY; break;
+    case CSTATE_DOWN:          new_state = APP_STATE_DOWN; break;
     }
     output.printf("\n\rLIVEOBJECTS CLIENT STATE CHANGE (%d) :  %d -> %d \r\n", state, appv_state, new_state);
     appv_state = new_state;
@@ -1116,7 +1119,7 @@ int main() {
 
         appv_state = APP_STATE_NETWORK_READY;
 
-        LiveObjectsClient_SetDbgLevel(DBG_DFT_LOMC_LOG_LEVEL);
+        LiveObjectsClient_SetDbgMsgDump(DBG_DFT_LOMC_MSG_DUMP);
 
         // Initialize the LiveObjects Client Context
         // ------------------------------------------

@@ -9,5 +9,6 @@ In the file js/common.js :
 
 The variable SERVER_ADDR should contain the adress of your LiveObjects instance (IP or DNs name).
 The variable API_KEY should contain the value of your API-Key you want to use for the demo.
+The variable ASSET_ID should contain the MAC address of your device (used as device identifier).
 
 To launch the demo, simply open index.html with firefox or chrome.
