@@ -27,14 +27,18 @@
 //#define LOC_SERV_PORT                        XXXX
 //#define LOC_SERV_TIMEOUT                     XXXX
 
+// Issue with DNS to resolve FQDN liveobjects.orange-business.com ?
+//#define LOC_SERV_IP_ADDRESS                  "84.39.42.214"
+//#define LOC_SERV_IP_ADDRESS                  "84.39.42.208"
+
 // When set to 1, use the MAC address as LiveObject device identifier
 // otherwise use LOC_CLIENT_DEV_ID
-#define LOC_CLIENT_USE_MAC_ADDR              0
+#define LOC_CLIENT_USE_MAC_ADDR              1
 
 // Default LiveObjects device settings : name space and device identifier
-#define LOC_CLIENT_DEV_NAME_SPACE            "LiveObjectsSample"
+#define LOC_CLIENT_DEV_NAME_SPACE            "ghsensor"
 #if !LOC_CLIENT_USE_MAC_ADDR
-#define LOC_CLIENT_DEV_ID                    "LO_sample_dev01"
+#define LOC_CLIENT_DEV_ID                    "LO_dev_01"
 #endif
 
 // Here, set your LiveObject Apikey. It is mandatory to run the application

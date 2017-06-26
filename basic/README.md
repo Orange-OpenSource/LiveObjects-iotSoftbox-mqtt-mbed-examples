@@ -1,7 +1,7 @@
 LiveObjects Iot Device Sample
 ==============================
 
-This is the LiveObjects IoT Device sample for mbed OS, running on FRDM-K64F board.
+This is the Live Objects IoT device sample for mbed OS, running on FRDM-K64F board.
 
 The application:
 
@@ -32,7 +32,7 @@ The application:
     * if the connection is lost, restart at step 2        
     
 
-See [Datavenue Live Objects - complete guide]((https://liveobjects.orange-business.com/doc/html/lo_manual.html)
+See [Datavenue Live Objects - complete guide](http://liveobjects.orange-business.com/doc/html/lo_manual.html)
 
 
 ## Required hardware
@@ -50,7 +50,7 @@ see [the user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md).
     * [GCC ARM Embedded Toolchain](https://launchpad.net/gcc-arm-embedded/): Use [5-2015-q4-major](https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major)
     * [Python 2.7](https://www.python.org/downloads/): use [Python 2.7.12 2016-06-25](https://www.python.org/downloads/release/python-2712/)
 * [Serial port monitor](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications).
-* [LiveObjects account](http://m2m.orange.com)
+* [LiveObjects account](http://liveobjects.orange-business.com)
 
 
 ## Brief install

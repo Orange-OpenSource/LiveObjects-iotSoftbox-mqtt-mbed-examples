@@ -19,6 +19,7 @@
 #ifndef __liveobjects_dev_config_H_
 #define __liveobjects_dev_config_H_
 
+//#define LOC_MQTT_DUMP_MSG                    3
 
 //#define LOC_FEATURE_MBEDTLS                  0
 
@@ -45,5 +46,13 @@
 
 //#define LOM_JSON_BUF_SZ                      1024
 //#define LOM_JSON_BUF_USER_SZ                 200
+
+//#define LOM_SETOFDATA_STREAM_ID_SZ           80
+//#define LOM_SETOFDATA_MODEL_SZ               80
+//#define LOM_SETOFDATA_TAGS_SZ                80
+
+//#define LOM_PUSH_ASYNC                       0
+//#define LOM_MQUEUE                           0
+
 
 #endif /* __liveobjects_dev_config_H_ */

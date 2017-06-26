@@ -21,11 +21,11 @@
 #include "mbed.h"
 #include "rtos.h"
 
-static const char* appv_version = "MBED STM32 sample V01.02";
+static const char* appv_version = "MBED STM32 sample V04.01";
 
 #define DBG_DFT_MAIN_LOG_LEVEL    0
-#define DBG_DFT_LOMC_LOG_LEVEL    0
-#define DBG_DFT_MBED_LOG_LEVEL   TRACE_ACTIVE_LEVEL_INFO
+#define DBG_DFT_LOMC_MSG_DUMP     0 //0x0B
+#define DBG_DFT_MBED_LOG_LEVEL    TRACE_ACTIVE_LEVEL_INFO
 
 
 // Two application threads:
@@ -119,9 +119,9 @@ char    appv_status_message[150] = "READY";
 
 /// Set of status
 LiveObjectsD_Data_t appv_set_status[] = {
-    { LOD_TYPE_STRING_C, "sample_version" ,  (void*)appv_version },
-    { LOD_TYPE_INT32,    "sample_counter" ,  &appv_status_counter},
-    { LOD_TYPE_STRING_C, "sample_message" ,  appv_status_message}
+    { LOD_TYPE_STRING_C, "sample_version" ,  (void*)appv_version, 1 },
+    { LOD_TYPE_INT32,    "sample_counter" ,  &appv_status_counter, 1 },
+    { LOD_TYPE_STRING_C, "sample_message" ,  appv_status_message, 1 }
 };
 #define SET_STATUS_NB (sizeof(appv_set_status) / sizeof(LiveObjectsD_Data_t))
 
@@ -142,8 +142,7 @@ float    appv_measures_light = 5.0;
 
 /// Set of Collected data (published on a data stream)
 LiveObjectsD_Data_t appv_set_measures[] = {
-    { LOD_TYPE_UINT32, "counter" ,        &appv_measures_counter},
-    { LOD_TYPE_FLOAT,  "light" ,  &appv_measures_light }
+    { LOD_TYPE_FLOAT,  "light" ,  &appv_measures_light, 1 }
 };
 #define SET_MEASURES_NB (sizeof(appv_set_measures) / sizeof(LiveObjectsD_Data_t))
 
@@ -256,7 +255,7 @@ int main() {
     if (0 == app_net_init()) {
         output.printf("\n\rConnected to Network successfully\r\n");
 
-        LiveObjectsClient_SetDbgLevel(DBG_DFT_LOMC_LOG_LEVEL);
+        LiveObjectsClient_SetDbgMsgDump(DBG_DFT_LOMC_MSG_DUMP);
 
         // Initialize the LiveObjects Client Context
         // -----------------------------------------

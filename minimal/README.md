@@ -1,7 +1,7 @@
 LiveObjects Iot Value Sample
 ==============================
 
-This is a LiveObjects IoT Device example for mbed OS, running on STM32F429 NUCLEO-144.
+This is a Live Objects IoT device example for mbed OS, running on STM32F429 NUCLEO-144.
 
 The application:
 
@@ -33,7 +33,7 @@ see [the user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md).
     * [GCC ARM Embedded Toolchain](https://launchpad.net/gcc-arm-embedded/): Use [5-2015-q4-major](https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major)
     * [Python 2.7](https://www.python.org/downloads/): use [Python 2.7.12 2016-06-25](https://www.python.org/downloads/release/python-2712/)
 * [Serial port monitor](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications).
-* [LiveObjects account](http://m2m.orange.com)
+* [LiveObjects account](http://liveobjects.orange-business.com)
 
 
 ## Brief install

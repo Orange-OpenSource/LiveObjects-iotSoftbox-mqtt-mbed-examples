@@ -9,11 +9,11 @@
  */
 
 /**
-  * @file  liveobjects_dev_security.h
-  *
-  * @brief Define certificates and TLS mode
-  *
-  */
+ * @file  liveobjects_dev_security.h
+ *
+ * @brief Define certificates and TLS mode
+ *
+ */
 #ifndef __liveobjects_dev_security_H_
 #define __liveobjects_dev_security_H_
 
@@ -67,7 +67,7 @@ const char SERVER_CERT[] = "-----BEGIN CERTIFICATE-----\n"
 
 #ifndef CLIENT_CERT
 
-const  char  CLIENT_CERT[] = "-----BEGIN CERTIFICATE-----\n"
+const char CLIENT_CERT[] = "-----BEGIN CERTIFICATE-----\n"
 
 "-----END CERTIFICATE-----\n";
 

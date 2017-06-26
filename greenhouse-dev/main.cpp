@@ -27,7 +27,7 @@
 #include "rtos.h"
 
 
-static const char* appv_version = "MBED GREENHOUSE DEMO V02.06";
+static const char* appv_version = "MBED GREENHOUSE DEMO V04.01";
 
 #if 0
 #define DBG_DFT_MAIN_LOG_LEVEL    3
@@ -38,7 +38,6 @@ static const char* appv_version = "MBED GREENHOUSE DEMO V02.06";
 #define DBG_DFT_MBED_LOG_LEVEL   TRACE_ACTIVE_LEVEL_INFO
 #define DBG_DFT_LOMC_MSG_DUMP    0x00
 #endif
-
 
 Serial            output(USBTX, USBRX);
 
@@ -324,17 +323,17 @@ struct conf_s {
 #endif
 
 LiveObjectsD_Param_t appv_set_param[] = {
-    { CFG_IDX_DATA_MEASURES, { LOD_TYPE_STRING_C, "stream_measures" ,  appv_conf.stream_measures } },
-    { CFG_IDX_DATA_LEDS,     { LOD_TYPE_STRING_C, "stream_leds" ,      appv_conf.stream_leds } },
-    { CFG_IDX_DATA_STATES,   { LOD_TYPE_STRING_C, "stream_states" ,    appv_conf.stream_states } },
-    { CFG_IDX_PERIOD,        { LOD_TYPE_UINT32,   "period" ,           &appv_conf.measure_period_sec } },
-    { CFG_IDX_NIGHT_MODE,    { LOD_TYPE_UINT32,   "night_mode" ,       &greenhouse_night_mode } },
+    { CFG_IDX_DATA_MEASURES, { LOD_TYPE_STRING_C, "stream_measures" ,  appv_conf.stream_measures, 1 } },
+    { CFG_IDX_DATA_LEDS,     { LOD_TYPE_STRING_C, "stream_leds" ,      appv_conf.stream_leds, 1 } },
+    { CFG_IDX_DATA_STATES,   { LOD_TYPE_STRING_C, "stream_states" ,    appv_conf.stream_states, 1 } },
+    { CFG_IDX_PERIOD,        { LOD_TYPE_UINT32,   "period" ,           &appv_conf.measure_period_sec, 1 } },
+    { CFG_IDX_NIGHT_MODE,    { LOD_TYPE_UINT32,   "night_mode" ,       &greenhouse_night_mode, 1 } },
 #ifndef GPS_INT32
-    { CFG_IDX_POS_LATITUDE,  { LOD_TYPE_FLOAT,    "latitude" ,         &greenhouse_gps_fix.gps_lat  } },
-    { CFG_IDX_POS_LONGITUDE, { LOD_TYPE_FLOAT,    "longitude" ,        &greenhouse_gps_fix.gps_long } }
+    { CFG_IDX_POS_LATITUDE,  { LOD_TYPE_FLOAT,    "latitude" ,         &greenhouse_gps_fix.gps_lat, 1  } },
+    { CFG_IDX_POS_LONGITUDE, { LOD_TYPE_FLOAT,    "longitude" ,        &greenhouse_gps_fix.gps_long, 1 } }
 #else
-    { CFG_IDX_POS_LAT_INT,   { LOD_TYPE_INT32,    "lat_int32" ,        &appv_conf.gps_lat  } },
-    { CFG_IDX_POS_LON_INT,   { LOD_TYPE_INT32,    "lon_int32" ,        &appv_conf.gps_long } }
+    { CFG_IDX_POS_LAT_INT,   { LOD_TYPE_INT32,    "lat_int32" ,        &appv_conf.gps_lat, 1  } },
+    { CFG_IDX_POS_LON_INT,   { LOD_TYPE_INT32,    "lon_int32" ,        &appv_conf.gps_long, 1 } }
 #endif
 };
 #define SET_PARAM_NB (sizeof(appv_set_param) / sizeof(LiveObjectsD_Param_t))
@@ -363,13 +362,13 @@ LiveObjectsD_Resource_t appv_set_resources[] = {
 // STATUS data
 //
 LiveObjectsD_Data_t appv_set_status[] = {
-    { LOD_TYPE_STRING_C, "greenhouse-version" ,       (void*)appv_version },
-    { LOD_TYPE_STRING_C, "greenhouse-message" ,       greenhouse_status_message },
-    { LOD_TYPE_UINT32,   "greenhouse-light-on",       (void*)&greenhouse_led_on },
-    { LOD_TYPE_UINT32,   "greenhouse-night-mode",     (void*)&greenhouse_night_mode }
+    { LOD_TYPE_STRING_C, "greenhouse-version" ,       (void*)appv_version, 1 },
+    { LOD_TYPE_STRING_C, "greenhouse-message" ,       greenhouse_status_message, 1 },
+    { LOD_TYPE_UINT32,   "greenhouse-light-on",       (void*)&greenhouse_led_on, 1 },
+    { LOD_TYPE_UINT32,   "greenhouse-night-mode",     (void*)&greenhouse_night_mode, 1 }
 #ifdef GPS_INT32
-    , { LOD_TYPE_FLOAT,  "greenhouse-gps-latitude" ,  &greenhouse_gps_fix.gps_lat }
-    , { LOD_TYPE_FLOAT,  "greenhouse-gps-longitude" , &greenhouse_gps_fix.gps_long }
+    , { LOD_TYPE_FLOAT,  "greenhouse-gps-latitude" ,  &greenhouse_gps_fix.gps_lat, 1 }
+    , { LOD_TYPE_FLOAT,  "greenhouse-gps-longitude" , &greenhouse_gps_fix.gps_long, 1 }
 #endif
 };
 #define SET_STATUS_NB (sizeof(appv_set_status) / sizeof(LiveObjectsD_Data_t))
@@ -380,18 +379,18 @@ LiveObjectsD_Data_t appv_set_status[] = {
 //
 
 LiveObjectsD_Data_t appv_set_measures[] = {
-    { LOD_TYPE_FLOAT,  "LightSensor" ,      &greenhouse_measure_light_percent },
-    { LOD_TYPE_UINT32, "LightIntensity" ,   &greenhouse_measure_light_ohm }
+    { LOD_TYPE_FLOAT,  "LightSensor" ,      &greenhouse_measure_light_percent, 1 },
+    { LOD_TYPE_UINT32, "LightIntensity" ,   &greenhouse_measure_light_ohm, 1 }
 };
 #define SET_DATA_MEASURES_NB (sizeof(appv_set_measures) / sizeof(LiveObjectsD_Data_t))
 
 LiveObjectsD_Data_t appv_set_leds[] = {
-    { LOD_TYPE_UINT32,  "LEDS" ,            &greenhouse_led_on },
+    { LOD_TYPE_UINT32,  "LEDS" ,            &greenhouse_led_on, 1 },
 };
 #define SET_DATA_LEDS_NB (sizeof(appv_set_leds) / sizeof(LiveObjectsD_Data_t))
 
 LiveObjectsD_Data_t appv_set_states[] = {
-    { LOD_TYPE_INT32, "LightSensorState" ,  &greenhouse_state_sensor_switch },
+    { LOD_TYPE_INT32, "LightSensorState" ,  &greenhouse_state_sensor_switch, 1 },
 };
 #define SET_DATA_STATES_NB (sizeof(appv_set_states) / sizeof(LiveObjectsD_Data_t))
 
@@ -1172,7 +1171,7 @@ int main() {
 
             appv_hdl_states = LiveObjectsClient_AttachData(STREAM_PREFIX,
                     appv_conf.stream_states,"mv1",NULL, &greenhouse_gps_fix, appv_set_states, SET_DATA_STATES_NB);
-            if (appv_hdl_states < 0) output.printf(" !!! ERROR (%d) to attach a collected data stream -  STATES !\r\n", appv_hdl_leds);
+            if (appv_hdl_states < 0) output.printf(" !!! ERROR (%d) to attach a collected data stream -  STATES !\r\n", appv_hdl_states);
 
             // Attach a set of commands to the LiveObjects Client instance
             // -----------------------------------------------------------

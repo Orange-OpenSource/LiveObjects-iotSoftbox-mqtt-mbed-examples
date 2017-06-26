@@ -9,15 +9,15 @@
  */
 
 /**
-  * @file  liveobjects_dev_security.h
-  *
-  * @brief Define certificates and TLS mode
-  *
-  */
+ * @file  liveobjects_dev_security.h
+ *
+ * @brief Define certificates and TLS mode
+ *
+ */
 #ifndef __liveobjects_dev_security_H_
 #define __liveobjects_dev_security_H_
 
-#define VERIFY_MODE   0
+#define VERIFY_MODE           1
 
 //#define SERVER_CERT           NULL
 #define CLIENT_CERT           NULL
@@ -35,7 +35,8 @@
 /*
  * see https://knowledge.symantec.com/support/mpki-for-ssl-support/index?page=content&actp=CROSSLINK&id=SO5624
  */
-const char SERVER_CERT[] = "-----BEGIN CERTIFICATE-----\n"
+const char SERVER_CERT[] =
+		"-----BEGIN CERTIFICATE-----\n"
 		"MIIE0zCCA7ugAwIBAgIQGNrRniZ96LtKIVjNzGs7SjANBgkqhkiG9w0BAQUFADCB\n"
 		"yjELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDlZlcmlTaWduLCBJbmMuMR8wHQYDVQQL\n"
 		"ExZWZXJpU2lnbiBUcnVzdCBOZXR3b3JrMTowOAYDVQQLEzEoYykgMjAwNiBWZXJp\n"
@@ -67,7 +68,7 @@ const char SERVER_CERT[] = "-----BEGIN CERTIFICATE-----\n"
 
 #ifndef CLIENT_CERT
 
-const  char  CLIENT_CERT[] = "-----BEGIN CERTIFICATE-----\n"
+const char CLIENT_CERT[] = "-----BEGIN CERTIFICATE-----\n"
 
 "-----END CERTIFICATE-----\n";
 

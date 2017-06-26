@@ -22,7 +22,13 @@
 #include "mbed.h"
 #include "rtos.h"
 
-static const char* appv_version = "MBED BASIC SAMPLE V02.05";
+static const char* appv_version = "MBED SAMPLE V04.01";
+
+#define MEASURES_ENABLED_AT_INIT     0
+#define STREAM_PREFIX                1
+#define USE_BUTTON_SWITCH            1         //D7 := PTC3
+#define USE_BUTTON_SW2               1
+#define MEASURES_ENABLED_CTL_ON_SW2  1
 
 #if 0
 #define DBG_DFT_MAIN_LOG_LEVEL    3
@@ -226,15 +232,20 @@ static int app_net_init(void)
 // ----------------------------------------------------------
 // STATUS data
 //
-
-int32_t appv_status_counter = 0;
-char    appv_status_message[150] = "READY";
+#if USE_BUTTON_SW2
+uint32_t appv_status_sw2_cnt = 0;
+#endif
+int32_t  appv_status_counter = 0;
+char     appv_status_message[150] = "READY";
 
 /// Set of status
 LiveObjectsD_Data_t appv_set_status[] = {
-    { LOD_TYPE_STRING_C, "sample_version" ,  (void*)appv_version },
-    { LOD_TYPE_INT32,    "sample_counter" ,  &appv_status_counter},
-    { LOD_TYPE_STRING_C, "sample_message" ,  appv_status_message}
+    { LOD_TYPE_STRING_C, "sample_version" ,  (void*)appv_version, 1 },
+    { LOD_TYPE_INT32,    "sample_counter" ,  &appv_status_counter, 1 },
+#if USE_BUTTON_SW2
+    { LOD_TYPE_UINT32,   "sample_sw2_cnt" ,  &appv_status_sw2_cnt, 1 },
+#endif
+    { LOD_TYPE_STRING_C, "sample_message" ,  appv_status_message, 1 }
 };
 #define SET_STATUS_NB (sizeof(appv_set_status) / sizeof(LiveObjectsD_Data_t))
 
@@ -244,10 +255,10 @@ int     appv_hdl_status = -1;
 // ----------------------------------------------------------
 // 'COLLECTED DATA'
 //
-#define STREAM_PREFIX   0
 
-
-uint8_t  appv_measures_enabled = 1;
+// Measures
+// --------
+uint8_t  appv_measures_enabled = MEASURES_ENABLED_AT_INIT;
 
 int32_t  appv_measures_temp_grad = -1;
 float    appv_measures_volt_grad = -0.2;
@@ -263,14 +274,28 @@ float    appv_measures_volt = 5.0;
 
 /// Set of Collected data (published on a data stream)
 LiveObjectsD_Data_t appv_set_measures[] = {
-    { LOD_TYPE_UINT32, "counter" ,        &appv_measures_counter},
-    { LOD_TYPE_INT32,  "temperature" ,    &appv_measures_temp},
-    { LOD_TYPE_FLOAT,  "battery_level" ,  &appv_measures_volt }
+    { LOD_TYPE_UINT32, "counter" ,        &appv_measures_counter, 1 },
+    { LOD_TYPE_INT32,  "temperature" ,    &appv_measures_temp, 1 },
+    { LOD_TYPE_FLOAT,  "battery_level" ,  &appv_measures_volt, 1 }
 };
 #define SET_MEASURES_NB (sizeof(appv_set_measures) / sizeof(LiveObjectsD_Data_t))
 
 int      appv_hdl_data = -1;
 
+// Button states
+// -------------
+
+#if USE_BUTTON_SW2 || USE_BUTTON_SWITCH
+uint8_t appv_button_state_sw2 = 0;
+uint8_t appv_button_state_switch = 0;
+
+LiveObjectsD_Data_t appv_set_button_states[] = {
+    { LOD_TYPE_BOOL, "SW2" ,     &appv_button_state_sw2, 1 },
+    { LOD_TYPE_BOOL, "Switch" ,  &appv_button_state_switch, 1 }
+};
+#define SET_DATA_STATES_NB (sizeof(appv_set_button_states) / sizeof(LiveObjectsD_Data_t))
+int appv_hdl_states = -1;
+#endif
 
 // ----------------------------------------------------------
 // CONFIGURATION data
@@ -278,6 +303,7 @@ int      appv_hdl_data = -1;
 volatile uint32_t appv_cfg_timeout = 10;
 
 // a structure containg various kind of parameters (char[], int and float)
+
 struct conf_s {
     char     name[20];
     int32_t  threshold;
@@ -288,18 +314,43 @@ struct conf_s {
         1.05
 };
 
+#define PARMS_FLOAT   16
+
+#if (PARMS_FLOAT == 16)
+float    appv_conf_fv[PARMS_FLOAT];
+#endif
+
 // definition of identifer for each kind of parameters
 #define PARM_IDX_NAME        1
 #define PARM_IDX_TIMEOUT     2
 #define PARM_IDX_THRESHOLD   3
 #define PARM_IDX_GAIN        4
-
+#define PARM_IDX_FLOAT       5
 /// Set of configuration parameters
 LiveObjectsD_Param_t appv_set_param[] = {
-    { PARM_IDX_NAME,      { LOD_TYPE_STRING_C, "name"    ,   appv_conf.name } },
-    { PARM_IDX_TIMEOUT,   { LOD_TYPE_UINT32,   "timeout" ,   (void*)&appv_cfg_timeout } },
-    { PARM_IDX_THRESHOLD, { LOD_TYPE_INT32,    "threshold" , &appv_conf.threshold } },
-    { PARM_IDX_GAIN,      { LOD_TYPE_FLOAT,    "gain" ,      &appv_conf.gain } }
+    { PARM_IDX_NAME,      { LOD_TYPE_STRING_C, "name"    ,   appv_conf.name, 1 } },
+    { PARM_IDX_TIMEOUT,   { LOD_TYPE_UINT32,   "timeout" ,   (void*)&appv_cfg_timeout, 1 } },
+    { PARM_IDX_THRESHOLD, { LOD_TYPE_INT32,    "threshold" , &appv_conf.threshold, 1 } },
+    { PARM_IDX_GAIN,      { LOD_TYPE_FLOAT,    "gain" ,      &appv_conf.gain, 1 } }
+
+#if (PARMS_FLOAT == 16)
+    ,{ PARM_IDX_FLOAT+0,  { LOD_TYPE_FLOAT,    "f0" ,      &appv_conf_fv[0], 1  } }
+    ,{ PARM_IDX_FLOAT+1,  { LOD_TYPE_FLOAT,    "f1" ,      &appv_conf_fv[1], 1  } }
+    ,{ PARM_IDX_FLOAT+2,  { LOD_TYPE_FLOAT,    "f2" ,      &appv_conf_fv[2], 1  } }
+    ,{ PARM_IDX_FLOAT+3,  { LOD_TYPE_FLOAT,    "f3" ,      &appv_conf_fv[3], 1  } }
+    ,{ PARM_IDX_FLOAT+4,  { LOD_TYPE_FLOAT,    "f4" ,      &appv_conf_fv[4], 1  } }
+    ,{ PARM_IDX_FLOAT+5,  { LOD_TYPE_FLOAT,    "f5" ,      &appv_conf_fv[5], 1  } }
+    ,{ PARM_IDX_FLOAT+6,  { LOD_TYPE_FLOAT,    "f6" ,      &appv_conf_fv[6], 1  } }
+    ,{ PARM_IDX_FLOAT+7,  { LOD_TYPE_FLOAT,    "f7" ,      &appv_conf_fv[7], 1  } }
+    ,{ PARM_IDX_FLOAT+8,  { LOD_TYPE_FLOAT,    "f8" ,      &appv_conf_fv[8], 1  } }
+    ,{ PARM_IDX_FLOAT+9,  { LOD_TYPE_FLOAT,    "f9" ,      &appv_conf_fv[9], 1  } }
+    ,{ PARM_IDX_FLOAT+10, { LOD_TYPE_FLOAT,    "f10" ,     &appv_conf_fv[10], 1 } }
+    ,{ PARM_IDX_FLOAT+11, { LOD_TYPE_FLOAT,    "f11" ,     &appv_conf_fv[11], 1 } }
+    ,{ PARM_IDX_FLOAT+12, { LOD_TYPE_FLOAT,    "f12" ,     &appv_conf_fv[12], 1 } }
+    ,{ PARM_IDX_FLOAT+13, { LOD_TYPE_FLOAT,    "f13" ,     &appv_conf_fv[13], 1 } }
+    ,{ PARM_IDX_FLOAT+14, { LOD_TYPE_FLOAT,    "f14" ,     &appv_conf_fv[14], 1 } }
+    ,{ PARM_IDX_FLOAT+15, { LOD_TYPE_FLOAT,    "f14" ,     &appv_conf_fv[15], 1 } }
+#endif
 };
 #define SET_PARAM_NB (sizeof(appv_set_param) / sizeof(LiveObjectsD_Param_t))
 
@@ -346,9 +397,6 @@ LiveObjectsD_Resource_t appv_set_resources[] = {
 // variables used to process the current resource transfer
 uint32_t appv_rsc_size = 0;
 uint32_t appv_rsc_offset = 0;
-
-
-
 
 
 // ==========================================================
@@ -408,6 +456,13 @@ extern "C" int main_cb_param_udp(const LiveObjectsD_Param_t* param_ptr, const vo
         }
         break;
     }
+#if (PARMS_FLOAT == 16)
+    if ((param_ptr->parm_uref >= PARM_IDX_FLOAT) && (param_ptr->parm_uref < PARM_IDX_FLOAT+PARMS_FLOAT)) {
+        float fv = *((const float*)value);
+        output.printf("update array f%d = %f\r\n", param_ptr->parm_uref - PARM_IDX_FLOAT, fv);
+        return 0;  // primitive parameter is updated by library
+    }
+#endif
     output.printf("ERROR to update param[%d] %s !!!\r\n", param_ptr->parm_uref, param_ptr->parm_data.data_name);
     return -1;
 }
@@ -630,8 +685,8 @@ static void main_cmd_delayed_resp_LED ()
             uint32_t code = 200;
             char msg [] = "USER LED TEST = OK";
             LiveObjectsD_Data_t cmd_resp[] = {
-                { LOD_TYPE_UINT32,    "code" ,  &code},
-                { LOD_TYPE_STRING_C,  "msg" ,   msg}
+                { LOD_TYPE_UINT32,    "code" ,  &code, 1},
+                { LOD_TYPE_STRING_C,  "msg" ,   msg, 1}
             };
             // switch off the Red LED
             app_led_user = 1;
@@ -690,6 +745,65 @@ static int main_cmd_doLED(LiveObjectsD_CommandRequestBlock_t* pCmdReqBlk)
 }
 
 // ==========================================================
+// BUTTONS
+
+// ----------------------------------------------------------
+// Button Interrupt SW2
+#if USE_BUTTON_SW2
+short       appv_button_sw2_raise = 0;
+InterruptIn appv_button_sw2_int(SW2);
+
+void app_sw2_release(void)
+{
+    //output.printf("On-board button SW2 was released - state=%u cnt=%u\r\n", appv_sw2_raise, appv_status_sw2_cnt);
+	appv_button_sw2_raise = 1;
+}
+#endif /* USE_BUTTON_SW2 */
+
+// ----------------------------------------------------------
+// Button Switch D7
+#if USE_BUTTON_SWITCH
+DigitalIn   appv_button_switch_in(D7, PullDown);    //D7 := PTC3  (D8 := PTA0)
+#endif
+
+void app_button_test(void)
+{
+#if USE_BUTTON_SW2 || USE_BUTTON_SWITCH
+    uint8_t change = 0;
+    uint8_t button_state;
+#if USE_BUTTON_SW2
+    if (appv_button_sw2_raise) {
+        appv_button_sw2_raise = 0;
+        button_state = (appv_button_state_sw2) ? 0 : 1;
+        output.printf("  *** FLIP-FLOP STATE OF SW2  %u -> %u\r\n", appv_button_state_sw2 , button_state);
+        appv_button_state_sw2 = button_state;
+#if MEASURES_ENABLED_CTL_ON_SW2
+        appv_measures_enabled = (appv_measures_enabled) ? 0 : 1;
+        output.printf("  ==> Now MEASURES PUBLISH is %s\r\n", appv_measures_enabled ? "enabled" : "disabled");
+#endif
+        change ++;
+        if (appv_hdl_status >= 0) {
+            appv_status_sw2_cnt++;
+            LiveObjectsClient_PushStatus(appv_hdl_status);
+        }
+    }
+#endif
+#if USE_BUTTON_SWITCH
+    button_state = appv_button_switch_in.read() ? 0 : 1;
+    if (appv_button_state_switch != button_state) {
+        change ++;
+        output.printf("  *** BUTTON STATE CHANGE %d -> %d \r\n", appv_button_state_switch, button_state);
+        appv_button_state_switch = button_state;
+    }
+#endif
+    if ((change) && (appv_hdl_states >= 0)) {
+        LiveObjectsClient_PushData(appv_hdl_states);
+    }
+#endif
+}
+
+
+// ==========================================================
 
 
 /// Counter ticker to increment periodically a application counter
@@ -706,6 +820,7 @@ void counter_inc(void) {
  *   - Send the delayed LED command response (if pending)
  */
 void thread_appli(void) {
+    uint32_t loop_delay = 0;
     uint32_t loop_cnt = 0;
     osThreadId id = osThreadGetId();
     output.printf("thread_appli: running %x\r\n", id);
@@ -715,13 +830,23 @@ void thread_appli(void) {
         if (delay == 0)          delay = 1000;   // min. 1 seconds
         else if (delay > 120000) delay = 120000; // max. 2 minutes
 
-        wait_ms(delay);
+        wait_ms(100);
 
-        ++loop_cnt;
-        if (appv_log_level > 1) output.printf("thread_appli: %u - period= %u ms\r\n", loop_cnt, delay);
+        loop_delay += 100;
+
+        // Process  button state change
+        app_button_test();
 
         // Process the LED command response if pending.
         main_cmd_delayed_resp_LED();
+
+        if (loop_delay < delay) {
+            continue;
+        }
+        loop_delay = 0;
+
+        ++loop_cnt;
+        if (appv_log_level > 1) output.printf("thread_appli: %u - period= %u ms\r\n", loop_cnt, delay);
 
         // Simulate measures : Voltage and Temperature ...
 
@@ -741,7 +866,6 @@ void thread_appli(void) {
         if (appv_measures_enabled) {
             LiveObjectsClient_PushData( appv_hdl_data );
         }
-
     }
 }
 
@@ -888,6 +1012,18 @@ int main() {
     output.printf("\r\n\r\n");
     output.printf("Starting LiveObject Client Example %s  (tid=x%p) ...\r\n", appv_version, appv_thread_id);
 
+#if USE_BUTTON_SW2
+    // Enable interrupts: SW2
+     output.printf("Enable SW2 ..\r\n");
+     appv_button_sw2_int.rise(&app_sw2_release);
+     appv_button_state_sw2 = 0;
+#endif
+
+#if USE_BUTTON_SWITCH
+     appv_button_state_switch = appv_button_switch_in.read() ? 0 : 1;
+     output.printf("Initial state of SWITCH button (D7) = %u\r\n", appv_button_state_switch);
+#endif
+
     app_trace_setup();
 
     // Start program only if LiveObjet Apikey parameter is well defined
@@ -944,10 +1080,16 @@ int main() {
             appv_hdl_status = LiveObjectsClient_AttachStatus(appv_set_status, SET_STATUS_NB);
             if (appv_hdl_status) output.printf(" !!! ERROR (%d) to attach status !\r\n", appv_hdl_status);
 
-            // Attach one set of collected data to the LiveObjects Client instance
+            // Attach 2 sets of collected data to the LiveObjects Client instance
             // --------------------------------------------------------------------
             appv_hdl_data = LiveObjectsClient_AttachData(STREAM_PREFIX, "LO_sample_measures", "mV1","\"Test\"", NULL, appv_set_measures, SET_MEASURES_NB);
             if (appv_hdl_data < 0) output.printf(" !!! ERROR (%d) to attach a collected data stream !\r\n", appv_hdl_data);
+
+#if USE_BUTTON_SW2 || USE_BUTTON_SWITCH
+            appv_hdl_states = LiveObjectsClient_AttachData(STREAM_PREFIX,
+                    "LO_sample_events","mv1","\"Test\",\"EVT\"", NULL, appv_set_button_states, SET_DATA_STATES_NB);
+            if (appv_hdl_states < 0) output.printf(" !!! ERROR (%d) to attach a collected data stream -  STATES !\r\n", appv_hdl_states);
+#endif
 
             // ==================================
             // User Application part.
@@ -963,6 +1105,7 @@ int main() {
                 output.printf("\n\r !!!! ERROR(%d) to start thread : thread_input_cons\r\n", ret);
             }
 
+#if 1
             output.printf(" ---- Start thread : thread_appli ....\r\n");
             ret = appli_thread.start(thread_appli);
             if (ret) {
@@ -970,6 +1113,7 @@ int main() {
             }
 
             wait_ms(1000);
+#endif
 #endif
 
             // Enable the receipt of commands
