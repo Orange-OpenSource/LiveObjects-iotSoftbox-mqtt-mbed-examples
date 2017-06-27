@@ -130,7 +130,7 @@
 #undef MBEDTLS_AES_ROM_TABLES
 
 // Save ROM and a few bytes of RAM by specifying our own ciphersuite list
-#define MBEDTLS_SSL_CIPHERSUITES  MBEDTLS_TLS_RSA_WITH_AES_128_GCM_SHA256
+#define MBEDTLS_SSL_CIPHERSUITES  MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 
 #include "mbedtls/check_config.h"
 
