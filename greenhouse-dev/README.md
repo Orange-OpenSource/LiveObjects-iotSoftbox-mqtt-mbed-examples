@@ -3,7 +3,7 @@ LiveObjects Iot Device Demonstrator : Green House
 
 This is the Live Objects IoT device demonstrator, running on FRDM-K64F board.
 
-You may want to give a look to the (user guide)[doc/liveobjects_starterkit_GreenhouseExample_v1.0.pdf].
+You may want to give a look to the [user guide](doc/liveobjects_starterkit_GreenhouseExample_v1.0.pdf).
 
 The application:
 
