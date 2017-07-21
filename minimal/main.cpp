@@ -246,7 +246,7 @@ int main() {
     output.printf("Starting LiveObject Client Example %s  (tid=x%p) ...\r\n", appv_version, appv_thread_id);
 
     char apikey[APIKEY_SIZE];
-    snprintf(foo, APIKEY_SIZE, "%016llx%016llx", C_LOC_CLIENT_DEV_API_KEY_P1, C_LOC_CLIENT_DEV_API_KEY_P2);
+    snprintf(apikey, APIKEY_SIZE, "%016llx%016llx", C_LOC_CLIENT_DEV_API_KEY_P1, C_LOC_CLIENT_DEV_API_KEY_P2);
 
     // Start program only if LiveObjet Apikey parameter is well defined
     if (LiveObjectsClient_CheckApiKey(apikey)) {
