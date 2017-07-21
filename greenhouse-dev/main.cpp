@@ -39,6 +39,8 @@ static const char* appv_version = "MBED GREENHOUSE DEMO V04.01";
 #define DBG_DFT_LOMC_MSG_DUMP    0x00
 #endif
 
+#define APIKEY_SIZE 33
+
 Serial            output(USBTX, USBRX);
 
 // Two application threads :
@@ -1082,9 +1084,12 @@ int main() {
 
     app_trace_setup();
 
+    char apikey[APIKEY_SIZE];
+    snprintf(foo, APIKEY_SIZE, "%016llx%016llx", C_LOC_CLIENT_DEV_API_KEY_P1, C_LOC_CLIENT_DEV_API_KEY_P2);
+
     // Start program only if LiveObjet Apikey parameter is well defined
-    if (LiveObjectsClient_CheckApiKey(LOC_CLIENT_DEV_API_KEY)) {
-        output.printf("apikey not set, '%s'\r\n", LOC_CLIENT_DEV_API_KEY);
+    if (LiveObjectsClient_CheckApiKey(apikey)) {
+        output.printf("apikey not set, '%s'\r\n", apikey);
         output.printf("\n\rExiting application ....\r\n");
         return -1;
     }

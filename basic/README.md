@@ -107,6 +107,29 @@ Copy the template header file **liveobjects_dev_params.h.txt** in the new header
 
 Edit this header file to update some values, in particular the **LiveObjects API key**.
 
+For security purpose, you will need to split the ApiKey in two parts.
+The first part is the first sixteen char of the ApiKey and the second one is the last sixteen char of the ApiKey.
+ An example is given below:
+
+```c
+/** Here, set your LiveObject Apikey. It is mandatory to run the application
+ *
+ * C_LOC_CLIENT_DEV_API_KEY_P1 must be the first sixteen char of the ApiKey
+ * C_LOC_CLIENT_DEV_API_KEY_P1 must be the last sixteen char of the ApiKey
+ *
+ * If your APIKEY is 0123456789abcdeffedcba9876543210 then
+ * it should look like this :
+ *
+ * #define C_LOC_CLIENT_DEV_API_KEY_P1			0x0123456789abcdef
+ * #define C_LOC_CLIENT_DEV_API_KEY_P2			0xfedcba9876543210
+ *
+ * */
+
+ #define C_LOC_CLIENT_DEV_API_KEY_P1			0x0123456789abcdef
+ #define C_LOC_CLIENT_DEV_API_KEY_P2			0xfedcba9876543210
+```
+
+
 
 ## Terminal Emulator
 

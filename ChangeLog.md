@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.2 (Jul 21, 2017)
+
+**Implemented enhancements:**
+
+- **Updated APIKEY filling.**
+
 ## 1.1.1 (Jun 27, 2017)
 
 **Fixed issues:**

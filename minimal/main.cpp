@@ -27,6 +27,7 @@ static const char* appv_version = "MBED STM32 sample V04.01";
 #define DBG_DFT_LOMC_MSG_DUMP     0 //0x0B
 #define DBG_DFT_MBED_LOG_LEVEL    TRACE_ACTIVE_LEVEL_INFO
 
+#define APIKEY_SIZE 33
 
 // Two application threads:
 
@@ -160,16 +161,16 @@ int read_light_data() {
 
 	uint8_t ret = 0;
 
-	
+
 	float voltage_read=a0.read();
 	if (voltage_read!=0)
 	{
 		float voltage_in=3.3;
 		float resistor=1000;
-		float light_res=voltage_in*resistor/voltage_read-resistor;		
+		float light_res=voltage_in*resistor/voltage_read-resistor;
 		light_res=light_res/1000;
 		printf("measured resistor: %lf\n",light_res);
-		
+
 		appv_measures_light=500/light_res;
 	}
 	else{
@@ -232,7 +233,7 @@ static void appli_client_state_cb(LiveObjectsD_State_t state)
 /// Entry point to the program
 int main() {
     int ret;
-    
+
     appv_state = APP_STATE_INIT;
 
     // Keep track of the main thread
@@ -244,9 +245,12 @@ int main() {
     output.printf("\r\n\r\n");
     output.printf("Starting LiveObject Client Example %s  (tid=x%p) ...\r\n", appv_version, appv_thread_id);
 
+    char apikey[APIKEY_SIZE];
+    snprintf(foo, APIKEY_SIZE, "%016llx%016llx", C_LOC_CLIENT_DEV_API_KEY_P1, C_LOC_CLIENT_DEV_API_KEY_P2);
+
     // Start program only if LiveObjet Apikey parameter is well defined
-    if (LiveObjectsClient_CheckApiKey(LOC_CLIENT_DEV_API_KEY)) {
-        output.printf("apikey not set, '%s'\r\n", LOC_CLIENT_DEV_API_KEY);
+    if (LiveObjectsClient_CheckApiKey(apikey)) {
+        output.printf("apikey not set, '%s'\r\n", apikey);
         output.printf("\n\rExiting application ....\r\n");
         return -1;
     }
@@ -277,7 +281,7 @@ int main() {
                 }
             }
 #endif
-           
+
 
             // Attach my local STATUS data to the LiveObjects Client instance
             // --------------------------------------------------------------
@@ -294,7 +298,7 @@ int main() {
 
             wait_ms(1000);
 
- 
+
             output.printf(" ---- Start thread : thread_appli ....\r\n");
             ret = appli_thread.start(thread_appli);
             if (ret) {
@@ -304,7 +308,7 @@ int main() {
             wait_ms(1000);
 
 
- 
+
             // ==================================
              // Start a new sthread to run LiveObjects Client (forever ...)
             output.printf("\n\rLiveObjectsClient_ThreadStart ...\r\n");
@@ -326,5 +330,3 @@ int main() {
     output.printf("\n\rExiting application ....\r\n");
 
 }
-
-
