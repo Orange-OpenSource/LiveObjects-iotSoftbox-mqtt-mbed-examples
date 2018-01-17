@@ -26,6 +26,26 @@
 #include "mbed.h"
 #include "rtos.h"
 
+/* Default LiveObjects device settings : name space and device identifier*/
+#define LOC_CLIENT_DEV_NAME_SPACE            "LiveObjectsDomain"
+
+#define LOC_CLIENT_DEV_ID                    "LO_softboxMbed_01"
+
+/** Here, set your LiveObject Apikey. It is mandatory to run the application
+ *
+ * C_LOC_CLIENT_DEV_API_KEY_P1 must be the first sixteen char of the ApiKey
+ * C_LOC_CLIENT_DEV_API_KEY_P1 must be the last sixteen char of the ApiKey
+ *
+ * If your APIKEY is 0123456789abcdeffedcba9876543210 then
+ * it should look like this :
+ *
+ * #define C_LOC_CLIENT_DEV_API_KEY_P1			0x0123456789abcdef
+ * #define C_LOC_CLIENT_DEV_API_KEY_P2			0xfedcba9876543210
+ *
+ * */
+
+#define C_LOC_CLIENT_DEV_API_KEY_P1			0x0123456789abcdef
+#define C_LOC_CLIENT_DEV_API_KEY_P2			0xfedcba9876543210
 
 static const char* appv_version = "MBED GREENHOUSE DEMO V04.01";
 
@@ -1124,10 +1144,16 @@ int main() {
         appv_state = APP_STATE_NETWORK_READY;
 
         LiveObjectsClient_SetDbgMsgDump(DBG_DFT_LOMC_MSG_DUMP);
+    	LiveObjectsClient_SetDevId(LOC_CLIENT_DEV_ID);
+    	LiveObjectsClient_SetNameSpace(LOC_CLIENT_DEV_NAME_SPACE);
+
+    	unsigned long long apikey_p1 = C_LOC_CLIENT_DEV_API_KEY_P1;
+    	unsigned long long apikey_p2 = C_LOC_CLIENT_DEV_API_KEY_P2;
 
         // Initialize the LiveObjects Client Context
-        // ------------------------------------------
+        // -----------------------------------------
         output.printf("\n\rLiveObjectsClient_Init ...\r\n");
+        ret = LiveObjectsClient_Init(appv_network_interface, apikey_p1, apikey_p2);
         ret = LiveObjectsClient_Init(appv_network_interface);
         if (ret) {
              output.printf("\n\rLiveObjectsClient_Init Failed !\r\n");

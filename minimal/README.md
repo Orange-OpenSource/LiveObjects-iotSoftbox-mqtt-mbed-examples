@@ -9,9 +9,9 @@ The application:
 1. Connects to the [Datavenue Live Objects Plaftorm](https://liveobjects.orange-business.com/doc/html/lo_manual.html), using:
     * an optional secure connection (TLS)
     * the LiveObjects mode: [Json+Device](https://liveobjects.orange-business.com/doc/html/lo_manual.html#MQTT_MODE_DEVICE)
-1. Publishs 
-    * the [current Status/Info](https://liveobjects.orange-business.com/doc/html/lo_manual.html#MQTT_DEV_INFO). 
-    * the [current data values](https://liveobjects.orange-business.com/doc/html/lo_manual.html#MQTT_DEV_DATA). 
+1. Publishs
+    * the [current Status/Info](https://liveobjects.orange-business.com/doc/html/lo_manual.html#MQTT_DEV_INFO).
+    * the [current data values](https://liveobjects.orange-business.com/doc/html/lo_manual.html#MQTT_DEV_DATA).
 
 
 ## Required hardware
@@ -28,7 +28,7 @@ The application:
 ## Required software
 
 * [mbed-cli](https://github.com/ARMmbed/mbed-cli) - to build the sample programs.
-To learn how to build mbed OS applications with mbed-cli, 
+To learn how to build mbed OS applications with mbed-cli,
 see [the user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md).
     * [GCC ARM Embedded Toolchain](https://launchpad.net/gcc-arm-embedded/): Use [5-2015-q4-major](https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major)
     * [Python 2.7](https://www.python.org/downloads/): use [Python 2.7.12 2016-06-25](https://www.python.org/downloads/release/python-2712/)
@@ -47,10 +47,10 @@ see [the user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md).
 
 
 # Install mbed-cli  
- git clone https://github.com/ARMmbed/mbed-cli 
+ git clone https://github.com/ARMmbed/mbed-cli
  cd mbed-cli   
  python setup.py install  
- 
+
  mbed config --global GCC_ARM_PATH "C:\Program Files (x86)\GNU Tools ARM Embedded\5.2 2015q4\bin"  
 
 ```
@@ -81,20 +81,26 @@ Visit [IoT Soft Box powered by Datavenue](https://liveobjects.orange-business.co
 1. You need to request the creation of a developper account.
 1. Then, with your LiveObjects user identifier, login to the [Live Objects portal](https://liveobjects.orange-business.com/#/login).
 1. Go in 'Configuration - API key' tab, and add a new API key.   
-**Don't forget to copy this API key value** in a local and secure place during this operation. 
+**Don't forget to copy this API key value** in a local and secure place during this operation.
 
 
-### LiveObjects header file
+### Setup the LiveObjects header file
 
-Copy the template header file **liveobjects_dev_params.h.txt** in the new header file **liveobjects_dev_params.h** if it does not exist.
+**Warning : each example has independent configuration**
 
-Edit this header file to update some values, in particular the **LiveObjects API key**.
+#### API key
+In the config directory of every example, you will find 3 files to customize the behavior of the library.
+Edit those files to change some values. in particular the **LiveObjects API key** in the main file `nameOfTheExample.c`.
 
 For security purpose, you will need to split the ApiKey in two parts.
 The first part is the first sixteen char of the ApiKey and the second one is the last sixteen char of the ApiKey.
  An example is given below:
 
 ```c
+/* Default LiveObjects device settings : name space and device identifier*/
+#define LOC_CLIENT_DEV_NAME_SPACE            "LiveObjectsDomain"
+#define LOC_CLIENT_DEV_ID                    "LO_softboxlinux_01"
+
 /** Here, set your LiveObject Apikey. It is mandatory to run the application
  *
  * C_LOC_CLIENT_DEV_API_KEY_P1 must be the first sixteen char of the ApiKey
@@ -108,11 +114,17 @@ The first part is the first sixteen char of the ApiKey and the second one is the
  *
  * */
 
- #define C_LOC_CLIENT_DEV_API_KEY_P1			0x0123456789abcdef
- #define C_LOC_CLIENT_DEV_API_KEY_P2			0xfedcba9876543210
+#define C_LOC_CLIENT_DEV_API_KEY_P1			0x0123456789abcdef
+#define C_LOC_CLIENT_DEV_API_KEY_P2			0xfedcba9876543210
 ```
 
+#### Security
+From the file `liveobjects_dev_params.h` you can also disable TLS By switching `#define SECURITY_ENABLED 1` to 0.
+If the security is disabled your device will communicate in plain text with the platform.
 
+By disabling the security, MbedTLS code's will still be embedded because it is used by the resource appliance.
+
+You can avoid compiling mbedTLS by uncommenting `//#define LOC_FEATURE_MBEDTLS 0` in  `liveobjects_dev_config.h` but resource related feature won't be available.
 
 ## Terminal Emulator
 
@@ -134,9 +146,9 @@ To build the sample application:
 1. Clone this repository in a local directory. (Note that the name of this directory will the name of binary file)
 1. Open a command line tool and navigate to the project’s directory.
 1. Execute the `mbed config root .` command. (if it fails, try `mbed new .` command
-1. Update all sources using the `mbed update` command. This command installs packages: mbed-os, MQTTPacket, iotsoftbox-mqtt, and jsmn) 
+1. Update all sources using the `mbed update` command. This command installs packages: mbed-os, MQTTPacket, iotsoftbox-mqtt, and jsmn)
 1. [Configure](#application-setup) the client application.
-1. Build the application by selecting the hardware board and build the toolchain using the command `mbed compile -m NUCLEO_F429ZI -t GCC_ARM`. mbed-cli builds a binary file under the project’s `.build` directory.	
+1. Build the application by selecting the hardware board and build the toolchain using the command `mbed compile -m NUCLEO_F429ZI -t GCC_ARM`. mbed-cli builds a binary file under the project’s `.build` directory.
 1. Plug the Ethernet cable into the board if you are using Ethernet mode.
 1. Plug the micro-USB cable into the **OpenSDA** port. The board is listed as a mass-storage device.
 1. Drag and drop the binary `.build/NUCLEO_F429ZI/GCC_ARM/<local_dir_name>.bin` to the board to flash the application.
@@ -161,5 +173,3 @@ Using your Live Objects user account, go to [Live Objects Portal](https://liveob
 ### Live Objects Swagger
 
 Go in [Live Objects Swagger User Interface](https://liveobjects.orange-business.com/swagger-ui/index.html).
-
-
